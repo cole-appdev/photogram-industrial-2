@@ -1,11 +1,15 @@
 task sample_data: :environment do
   p "Creating sample data"
 
-  FollowRequest.destroy_all
-  Like.destroy_all
-  Comment.destroy_all
-  Photo.destroy_all
-  User.destroy_all
+  # Clean the deck (the order is important here)
+  if Rails.env.development?
+    FollowRequest.destroy_all
+    Like.destroy_all
+    Comment.destroy_all
+    Photo.destroy_all
+    User.destroy_all
+  end
+
 
   # Create Users
   12.times do 
