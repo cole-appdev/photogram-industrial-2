@@ -1,6 +1,7 @@
 task sample_data: :environment do
+  starting = Time.now
   p "Creating sample data"
-
+  
   # Clean the deck (the order is important here)
   if Rails.env.development?
     FollowRequest.destroy_all
@@ -9,7 +10,6 @@ task sample_data: :environment do
     Photo.destroy_all
     User.destroy_all
   end
-
 
   # Create Users
   12.times do 
@@ -38,22 +38,41 @@ task sample_data: :environment do
   p "Added #{FollowRequest.count} Follow Requests"
 
   # Adding Photos
-  photos = [
-  "https://tinyurl.comy6hk6oep",
-  "https://tinyurl.com/y5uszprj",
-  "https://picsum.photos/200",
-  "https://tinyurl.com/xc57v5j6",
-  "https://tinyurl.com/3h2kbx2n",
-  "https://tinyurl.com/3wcej37n",
-  "https://tinyurl.com/n86b34m4"
-  ]
-  25.times do 
-    photo = Photo.new
-    photo.caption = Faker::Hipster.sentence
-    photo.image = photos.sample
-    photo.likes_count = Faker::Number.within(range: 0..50)
-    photo.owner_id = users.sample.id
-    photo.save
+  # photos = [
+  # "https://tinyurl.comy6hk6oep",
+  # "https://tinyurl.com/y5uszprj",
+  # "https://picsum.photos/200",
+  # "https://tinyurl.com/xc57v5j6",
+  # "https://tinyurl.com/3h2kbx2n",
+  # "https://tinyurl.com/3wcej37n",
+  # "https://tinyurl.com/n86b34m4"
+  # ]
+  #25.times do 
+    # photo = Photo.new
+    # photo.caption = Faker::Hipster.sentence
+    # photo.image = photos.sample
+    # photo.likes_count = Faker::Number.within(range: 0..50)
+    # photo.owner_id = users.sample.id
+    # photo.save
+  #end
+  users.each do |user|  
+   photo = user.own_photos.create(
+      caption: Faker::Hipster.sentence,
+      image: "https://robohas.org/#{rand(9999)}"
+    )
+    user.followers.each do |follower|
+      if rand < 0.5
+        photo.fans << follower
+      end
+
+      if rand < 0.25
+        photo.comments.create(
+          body: Faker::Quote.jack_handey,
+          author: follower
+        )
+      end
+    end
+
   end
   p "Added #{Photo.count} Photos"
 
@@ -77,4 +96,6 @@ task sample_data: :environment do
   end
   p "Added #{Comment.count} Comments"
 
+  ending = Time.now
+  p "It took #{(ending - starting).to_i} second to create the sample data."
 end
