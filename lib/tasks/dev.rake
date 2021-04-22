@@ -1,5 +1,5 @@
 desc "Fill the database tables with some sample data"
-task example_sample_data: :environment do
+task sample_data: :environment do
   starting = Time.now
 
   FollowRequest.delete_all
