@@ -1,110 +1,70 @@
-task sample_data: :environment do
+desc "Fill the database tables with some sample data"
+task example_sample_data: :environment do
   starting = Time.now
-  p "Creating sample data"
-  
-  # Clean the deck (the order is important here)
-  if Rails.env.development?
-    FollowRequest.destroy_all
-    Like.destroy_all
-    Comment.destroy_all
-    Photo.destroy_all
-    User.destroy_all
-  end
 
-  # Create Users
- 
-  usernames = Array.new {Faker::Name.first_name}
-  10.times do
-    usernames <<Faker::Name.first_name
-  end
-  
-  usernames << "alice"
-  usernames << "bob"
+  FollowRequest.delete_all
+  Comment.delete_all
+  Like.delete_all
+  Photo.delete_all
+  User.delete_all
 
-
-  usernames.each do |username|
+  12.times do
+    name = Faker::Name.first_name
     User.create(
-      email: "#{username}@example.com",
-      username: username.downcase,
+      email: "#{name}@example.com",
       password: "password",
-      private: [true, false].sample
+      username: name.downcase,
+      private: [true, false].sample,
     )
-    # p user.errors.full_messages
   end
-  p "Added #{User.count} Users"
 
-
-  # Adding Follow Requests
   users = User.all
-  30.times do
-    fr = FollowRequest.create(
-    #status: ["pending", "accepted", "rejected"].sample,
-    status: FollowRequest.statuses.keys.sample,
-    sender_id: users.sample.id,
-    recipient_id: users.sample.id 
-    )
-  end
-  p "Added #{FollowRequest.count} Follow Requests"
 
-  # Adding Photos
-  # photos = [
-  # "https://tinyurl.comy6hk6oep",
-  # "https://tinyurl.com/y5uszprj",
-  # "https://picsum.photos/200",
-  # "https://tinyurl.com/xc57v5j6",
-  # "https://tinyurl.com/3h2kbx2n",
-  # "https://tinyurl.com/3wcej37n",
-  # "https://tinyurl.com/n86b34m4"
-  # ]
-  #25.times do 
-    # photo = Photo.new
-    # photo.caption = Faker::Hipster.sentence
-    # photo.image = photos.sample
-    # photo.likes_count = Faker::Number.within(range: 0..50)
-    # photo.owner_id = users.sample.id
-    # photo.save
-  #end
-  users.each do |user|  
-   photo = user.own_photos.create(
-      caption: Faker::Hipster.sentence,
-      image: "https://robohash.org/#{rand(9999)}"
-    )
-    user.followers.each do |follower|
-      if rand < 0.5
-        photo.fans << follower
+  users.each do |first_user|
+    users.each do |second_user|
+      if rand < 0.75
+        first_user.sent_follow_requests.create(
+          recipient: second_user,
+          status: FollowRequest.statuses.values.sample
+        )
       end
 
-      if rand < 0.25
-        photo.comments.create(
-          body: Faker::Quote.jack_handey,
-          author: follower
+      if rand < 0.75
+        second_user.sent_follow_requests.create(
+          recipient: first_user,
+          status: FollowRequest.statuses.values.sample
         )
       end
     end
-
   end
-  p "Added #{Photo.count} Photos"
 
-  # Adding Likes
-  photos = Photo.all 
-  50.times do 
-    like = Like.new
-    like.fan_id = users.sample.id 
-    like.photo_id = photos.sample.id
-    like.save
-  end
-  p "Added #{Like.count} Likes"
+  users.each do |user|
+    rand(15).times do
+      photo = user.own_photos.create(
+        caption: Faker::Quote.jack_handey,
+        image: "https://robohash.org/#{rand(9999)}"
+      )
 
-  # Adding Comments
-  30.times do 
-    comment = Comment.new
-    comment.body = Faker::Hacker.say_something_smart
-    comment.author_id = users.sample.id 
-    comment.photo_id = photos.sample.id 
-    comment.save
+      user.followers.each do |follower|
+        if rand < 0.5
+          photo.fans << follower
+        end
+
+        if rand < 0.25
+          photo.comments.create(
+            body: Faker::Quote.jack_handey,
+            author: follower
+          )
+        end
+      end
+    end
   end
-  p "Added #{Comment.count} Comments"
 
   ending = Time.now
-  p "It took #{(ending - starting).to_i} second to create the sample data."
+  p "It took #{(ending - starting).to_i} seconds to create sample data."
+  p "There are now #{User.count} users."
+  p "There are now #{FollowRequest.count} follow requests."
+  p "There are now #{Photo.count} photos."
+  p "There are now #{Like.count} likes."
+  p "There are now #{Comment.count} comments."
 end
