@@ -12,10 +12,15 @@ task sample_data: :environment do
   end
 
   # Create Users
-
+ 
   usernames = Array.new {Faker::Name.first_name}
+  10.times do
+    usernames <<Faker::Name.first_name
+  end
+  
   usernames << "alice"
   usernames << "bob"
+
 
   usernames.each do |username|
     User.create(
