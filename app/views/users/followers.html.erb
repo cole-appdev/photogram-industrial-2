@@ -1,0 +1,16 @@
+<%= render "users/tabs"%>
+
+<%= current_user.followers.count%>
+
+<div class="row mb-3">
+  <div class="col-md-6 offset-md-3">
+    <ul class="list-group">
+      <% current_user.followers.each do |follower| %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <%= follower.username %>
+          <span class="badge badge-primary badge-pill"><%= follower.own_photos.count %></span>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
