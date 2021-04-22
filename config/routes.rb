@@ -15,11 +15,11 @@ Rails.application.routes.draw do
 
   get ":username/liked" => "photos#liked", as: :liked_photos 
   get ":username/feed" => "photos#feed", as: :feed_photos
-  #get ":username/followers" => "photos#liked", as: :followers 
-  #get ":username/following" => "photos#liked", as: :liked_photos 
+  get ":username/followers" => "users#followers", as: :followers 
+  #get ":username/following" => "users#following", as: :following
+
 
   get "/:username" => "users#show", as: :user
-
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 

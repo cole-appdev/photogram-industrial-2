@@ -1,27 +1,8 @@
-<div class="row mb-3">
-  <div class="col-md-6 offset-md-3">
-    <h1> <%= @user.username %> </h1>
-    <ul class="nav nav-pills nav-fill">
-      <li class="nav-item">
-        <%= link_to "Posts", user_path(@user.username), class: "nav-link"%>
-      </li>
-      <li class="nav-item">
-        <%= link_to "Liked Photos", liked_photos_path(@user.username), class: "nav-link" %>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Followers</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Following</a>
-      </li>
-    </ul>
-  </div>
-</div>
-
+<%= render "users/tabs"%>
 
 <%= current_user.liked_photos.count %>
 
-  <% current_user.own_photos.each do |photo| %>
-    <%= render "photos/photo", photo: photo%>
-  <% end %>
+<% current_user.liked_photos.each do |photo| %>
+  <%= render "photos/photo", photo: photo%>
+<% end %>
 
