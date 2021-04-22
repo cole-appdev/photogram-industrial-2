@@ -1,9 +1,9 @@
 <%= render "users/tabs"%>
 
 
-<%= current_user.own_photos.count %>
+<%= @photos.count %>
 
-<% current_user.own_photos.each do |photo| %>
+<% @photos.each do |photo| %>
   <%= render "photos/photo", photo: photo%>
 <% end %>
 
