@@ -1,0 +1,14 @@
+<%= render "users/tabs"%>
+
+<div class="row mb-3">
+  <div class="col-md-6 offset-md-3">
+    <ul class="list-group">
+      <% current_user.accepted_sent_follow_requests.each do |fr| %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <%= User.find(fr.recipient_id).username %>
+          <span class="badge badge-primary badge-pill"><%= User.find(fr.recipient_id).own_photos.count %></span>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
