@@ -1,8 +1,5 @@
 <%= render "users/tabs"%>
 
-
-<%= @photos.count %>
-
 <% @photos.each do |photo| %>
   <%= render "photos/photo", photo: photo%>
 <% end %>
