@@ -67,7 +67,7 @@ task sample_data: :environment do
   users.each do |user|  
    photo = user.own_photos.create(
       caption: Faker::Hipster.sentence,
-      image: "https://robohas.org/#{rand(9999)}"
+      image: "https://robohash.org/#{rand(9999)}"
     )
     user.followers.each do |follower|
       if rand < 0.5
